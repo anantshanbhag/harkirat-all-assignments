@@ -1,7 +1,7 @@
 import { Router } from "express";
 
-import { UserModel, CourseModel } from "../db/index.js";
-import { generateJwtUser, authenticateUser } from "../middleware/auth.js";
+import { UserModel, CourseModel } from "../../db/index.js";
+import { generateJwtUser, authenticateUser } from "../../middleware/auth.js";
 
 const router = Router();
 

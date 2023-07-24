@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { Button, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
+import axios from "axios";
+
 import { URL } from "./constants";
 
 function Appbar() {
@@ -9,22 +11,23 @@ function Appbar() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const options = {
-      method: "POST",
-      headers: {
-        authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    };
-    fetch(`${URL}/admin/me`, options)
-      .then((res) => res.json())
-      .then((data) => {
+    const fetchData = async () => {
+      try {
+        const { data } = await axios.get(`${URL}/admin/me`, {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+
         if (data?.username) {
           setUserEmail(data.username);
         }
-      })
-      .finally(() => {
+      } finally {
         setIsLoading(false);
-      });
+      }
+    };
+
+    fetchData();
   }, []);
 
   if (isLoading) {

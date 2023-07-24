@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useRecoilState } from "recoil";
+import axios from "axios";
 
 import { coursesState } from "./states";
 import { URL } from "./constants";
@@ -9,17 +10,16 @@ function Courses() {
   const [courses, setCourses] = useRecoilState(coursesState);
 
   useEffect(() => {
-    const options = {
-      method: "GET",
-      headers: {
-        authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    };
-    fetch(`${URL}/admin/courses`, options)
-      .then((res) => res.json())
-      .then((data) => {
-        setCourses(data?.courses);
+    const fetchData = async () => {
+      const { data } = await axios.get(`${URL}/admin/courses`, {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
+      setCourses(data?.courses);
+    };
+
+    fetchData();
   }, []);
 
   return (

@@ -1,11 +1,12 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil";
 import { Button, TextField, Card, Typography } from "@mui/material";
+import axios from "axios";
 
 import { coursesState } from "./states";
 import { URL } from "./constants";
-import { useParams } from "react-router-dom";
 
 export const CourseCard = ({ courseId }) => {
   const courses = useRecoilValue(coursesState);
@@ -77,7 +78,7 @@ function UpdateCard({ courseId }) {
           <Button
             size="large"
             variant="contained"
-            onClick={() => {
+            onClick={async () => {
               const editedCourse = {
                 title,
                 description,
@@ -86,29 +87,27 @@ function UpdateCard({ courseId }) {
                 published: true,
               };
 
-              const options = {
-                method: "PUT",
-                headers: {
-                  "Content-Type": "application/json",
-                  authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-                body: JSON.stringify(editedCourse),
-              };
-              fetch(`${URL}/admin/courses/${courseId}`, options)
-                .then((res) => res.json())
-                .then((data) => {
-                  setMessage(data);
+              const { data } = await axios.put(
+                `${URL}/admin/courses/${courseId}`,
+                editedCourse,
+                {
+                  headers: {
+                    authorization: `Bearer ${localStorage.getItem("token")}`,
+                  },
+                }
+              );
 
-                  const updatedCourses = courses.map((prevCourse) => {
-                    if (prevCourse._id === courseId) {
-                      return { ...prevCourse, ...editedCourse };
-                    }
+              setMessage(data);
 
-                    return prevCourse;
-                  });
+              const updatedCourses = courses.map((prevCourse) => {
+                if (prevCourse._id === courseId) {
+                  return { ...prevCourse, ...editedCourse };
+                }
 
-                  setCourses(updatedCourses);
-                });
+                return prevCourse;
+              });
+
+              setCourses(updatedCourses);
             }}
           >
             Update Course
@@ -124,17 +123,17 @@ const Course = () => {
   const setCourses = useSetRecoilState(coursesState);
 
   useEffect(() => {
-    const options = {
-      method: "GET",
-      headers: {
-        authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    };
-    fetch(`${URL}/admin/courses`, options)
-      .then((res) => res.json())
-      .then((data) => {
-        setCourses(data?.courses);
+    const fetchData = async () => {
+      const { data } = await axios.get(`${URL}/admin/courses`, {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
+
+      setCourses(data?.courses);
+    };
+
+    fetchData();
   }, []);
 
   return (
