@@ -1,16 +1,12 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil";
-import { Button, TextField, Card, Typography } from "@mui/material";
 import axios from "axios";
+import { Button, TextField, Card, Typography } from "@mui/material";
 
-import { coursesState } from "./states";
 import { URL } from "./constants";
 
-export const CourseCard = ({ courseId }) => {
-  const courses = useRecoilValue(coursesState);
-  const course = courses.find((course) => course._id === courseId);
+export const CourseCard = ({ course }) => {
   return (
     <div style={{ display: "flex", justifyContent: "center" }}>
       <Card style={{ margin: 10, width: 300, minHeight: 80 }}>
@@ -24,13 +20,13 @@ export const CourseCard = ({ courseId }) => {
   );
 };
 
-function UpdateCard({ courseId }) {
-  const [courses, setCourses] = useRecoilState(coursesState);
+function UpdateCard({ course, setCourse }) {
+  const { _id: courseId } = course;
 
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [price, setPrice] = useState("");
-  const [imageLink, setImageLink] = useState("");
+  const [title, setTitle] = useState(course.title);
+  const [description, setDescription] = useState(course.description);
+  const [price, setPrice] = useState(course.price);
+  const [imageLink, setImageLink] = useState(course.imageLink);
   const [message, setMessage] = useState("");
 
   return (
@@ -40,6 +36,7 @@ function UpdateCard({ courseId }) {
         <Card variant="outlined" style={{ width: 400, padding: 20 }}>
           <Typography>Update Course Details</Typography>
           <TextField
+            value={title}
             onChange={(e) => setTitle(e.target.value)}
             fullWidth
             id="outlined-basic"
@@ -49,6 +46,7 @@ function UpdateCard({ courseId }) {
           <br />
           <br />
           <TextField
+            value={description}
             onChange={(e) => setDescription(e.target.value)}
             fullWidth
             id="outlined-basic"
@@ -58,6 +56,7 @@ function UpdateCard({ courseId }) {
           <br />
           <br />
           <TextField
+            value={price}
             onChange={(e) => setPrice(e.target.value)}
             fullWidth
             id="outlined-basic"
@@ -67,6 +66,7 @@ function UpdateCard({ courseId }) {
           <br />
           <br />
           <TextField
+            value={imageLink}
             onChange={(e) => setImageLink(e.target.value)}
             fullWidth
             id="outlined-basic"
@@ -99,15 +99,7 @@ function UpdateCard({ courseId }) {
 
               setMessage(data);
 
-              const updatedCourses = courses.map((prevCourse) => {
-                if (prevCourse._id === courseId) {
-                  return { ...prevCourse, ...editedCourse };
-                }
-
-                return prevCourse;
-              });
-
-              setCourses(updatedCourses);
+              setCourse(editedCourse);
             }}
           >
             Update Course
@@ -120,28 +112,32 @@ function UpdateCard({ courseId }) {
 
 const Course = () => {
   let { courseId } = useParams();
-  const setCourses = useSetRecoilState(coursesState);
+  const [course, setCourse] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      const { data } = await axios.get(`${URL}/admin/courses`, {
+      const { data } = await axios.get(`${URL}/admin/course/${courseId}`, {
         headers: {
           authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
 
-      setCourses(data?.courses);
+      setCourse(data?.course);
     };
 
     fetchData();
   }, []);
 
+  if (!course) {
+    return <>Loading...</>;
+  }
+
   return (
     <div
       style={{ display: "flex", justifyContent: "center", flexWrap: "wrap" }}
     >
-      <CourseCard courseId={courseId} />
-      <UpdateCard courseId={courseId} />
+      <CourseCard course={course} />
+      <UpdateCard course={course} setCourse={setCourse} />
     </div>
   );
 };

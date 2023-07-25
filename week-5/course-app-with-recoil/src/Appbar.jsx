@@ -1,7 +1,7 @@
-import { useNavigate } from "react-router-dom";
-import { Button, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Button, Typography } from "@mui/material";
 
 import { URL } from "./constants";
 
@@ -31,7 +31,7 @@ function Appbar() {
   }, []);
 
   if (isLoading) {
-    return <></>;
+    return <>Loading...</>;
   }
 
   return (
@@ -42,8 +42,24 @@ function Appbar() {
         <Typography>Coursera</Typography>
       </div>
       {userEmail ? (
-        <div style={{ display: "flex" }}>
+        <div style={{ display: "flex", gap: 10 }}>
           {userEmail}
+          <Button
+            variant="contained"
+            onClick={() => {
+              navigate("/addcourse");
+            }}
+          >
+            Add course
+          </Button>
+          <Button
+            variant="contained"
+            onClick={() => {
+              navigate("/courses");
+            }}
+          >
+            Courses
+          </Button>
           <Button
             variant="contained"
             onClick={() => {
