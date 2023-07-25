@@ -7,7 +7,7 @@ const generateJwt = (payload, secretKey) =>
   jwt.sign(payload, secretKey, { expiresIn: "1h" });
 
 const authenticateJwt = (secretKey, req, res, next) => {
-  const authHeader = req.headers.authorization;
+  const authHeader = req.headers.Authorization;
 
   if (!authHeader) {
     return res.sendStatus(401);

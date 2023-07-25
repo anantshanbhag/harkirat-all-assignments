@@ -15,7 +15,7 @@ function Appbar() {
       try {
         const { data } = await axios.get(`${URL}/admin/me`, {
           headers: {
-            authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
 
@@ -36,9 +36,14 @@ function Appbar() {
 
   return (
     <div
-      style={{ display: "flex", justifyContent: "space-between", padding: 4 }}
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        padding: 4,
+        zIndex: 1,
+      }}
     >
-      <div>
+      <div style={{ marginLeft: 10 }}>
         <Typography>Coursera</Typography>
       </div>
       {userEmail ? (
@@ -71,7 +76,7 @@ function Appbar() {
           </Button>
         </div>
       ) : (
-        <div style={{ display: "flex" }}>
+        <div style={{ display: "flex", gap: 10 }}>
           <Button
             variant="contained"
             onClick={() => {

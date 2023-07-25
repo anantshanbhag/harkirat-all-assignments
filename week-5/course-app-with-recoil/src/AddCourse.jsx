@@ -12,47 +12,54 @@ function AddCourse() {
   const [message, setMessage] = useState("");
 
   return (
-    <div>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        minHeight: "80vh",
+        flexDirection: "column",
+      }}
+    >
       {message && JSON.stringify(message)}
       <div style={{ display: "flex", justifyContent: "center" }}>
-        <Card variant="outlined" style={{ width: 400, padding: 20 }}>
+        <Card
+          variant="outlined"
+          style={{ width: 400, padding: 20, marginTop: 30, height: "100%" }}
+        >
           <TextField
+            style={{ marginBottom: 10 }}
             onChange={(e) => setTitle(e.target.value)}
             fullWidth
             id="outlined-basic"
             label="Title"
             variant="outlined"
           />
-          <br />
-          <br />
           <TextField
+            style={{ marginBottom: 10 }}
             onChange={(e) => setDescription(e.target.value)}
             fullWidth
             id="outlined-basic"
             label="Description"
             variant="outlined"
           />
-          <br />
-          <br />
           <TextField
+            style={{ marginBottom: 10 }}
             onChange={(e) => setPrice(e.target.value)}
             fullWidth
             id="outlined-basic"
             label="Price"
             variant="outlined"
           />
-          <br />
-          <br />
           <TextField
+            style={{ marginBottom: 10 }}
             onChange={(e) => setImageLink(e.target.value)}
             fullWidth
             id="outlined-basic"
             label="Image Link"
             variant="outlined"
           />
-          <br />
-          <br />
           <Button
+            style={{ marginBottom: 10 }}
             size="large"
             variant="contained"
             onClick={async () => {
@@ -67,7 +74,7 @@ function AddCourse() {
                 },
                 {
                   headers: {
-                    authorization: `Bearer ${localStorage.getItem("token")}`,
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
                   },
                 }
               );
